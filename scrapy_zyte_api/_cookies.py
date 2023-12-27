@@ -39,7 +39,9 @@ def _process_cookies(
         return
     nearbyid = jmespath.search("experimental.responseCookies[?name=='nearbyid']", api_response)
     if nearbyid:
-        logger.debug(f"Processing nearbyid at {request.url}: {nearbyid}")
+        logger.warning(f"Processing nearbyid at {request.url}: {nearbyid}")
+    else:
+        logger.warning(f"Processing cookies without nearbyid at {request.url}: {nearbyid}")
     cookie_jar = _get_cookie_jar(request, cookie_jars)
     for response_cookie in response_cookies:
         rest = {}
