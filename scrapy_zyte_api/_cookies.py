@@ -5,6 +5,10 @@ from urllib.parse import urlparse
 from scrapy.http import Request
 from scrapy.http.cookies import CookieJar
 
+import logging
+logger = logging.getLogger("_process_cookies")
+import jmespath
+
 
 def _get_cookie_jar(request: Request, cookie_jars: Dict[Any, CookieJar]) -> CookieJar:
     jar_id = request.meta.get("cookiejar")
@@ -33,6 +37,9 @@ def _process_cookies(
     response_cookies = api_response.get("experimental", {}).get("responseCookies")
     if not response_cookies:
         return
+    nearbyid = jmespath.search("experimental.responseCookies[?name=='nearbyid']", api_response)
+    if nearbyid:
+        f"Found nearbyid at {request.url}: {nearbyid}"
     cookie_jar = _get_cookie_jar(request, cookie_jars)
     for response_cookie in response_cookies:
         rest = {}
